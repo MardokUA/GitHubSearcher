@@ -1,3 +1,9 @@
 <resources>
     <string name="app_name">GitHub Searcher</string>
+    <!-- Search -->
+    <string name="error_empty_query">Query string is empty</string>
+    <string name="error_find_nothing">This organization doesn\’t have any repositories that match</string>
+    <string name="error_internet_connection">Internet connection error</string>
+    <string name="error_external">Something went wrong :(</string>
+    <string name="search_button_text">Find!</string>
 </resources>

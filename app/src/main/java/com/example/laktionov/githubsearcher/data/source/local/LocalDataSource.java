@@ -7,6 +7,7 @@ import com.example.laktionov.githubsearcher.data.DataSource;
 import com.example.laktionov.githubsearcher.data.source.local.database.LocalDataBase;
 
 public class LocalDataSource implements DataSource {
+
     private static final String DATABASE_NAME = "repo_db";
     private static LocalDataSource INSTANCE;
 
@@ -25,6 +26,11 @@ public class LocalDataSource implements DataSource {
 
     @Override
     public void findRepositories(String query, SourceCallBack callBack) {
+
+    }
+
+    @Override
+    public void persistLastResponseData() {
 
     }
 }

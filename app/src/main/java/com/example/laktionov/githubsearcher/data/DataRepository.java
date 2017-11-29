@@ -8,7 +8,9 @@ public class DataRepository implements DataSource {
     private static DataRepository INSTANCE;
 
     private DataSource mLocalDataSource;
-    private DataSource mRemoteDataSoutce;
+    private DataSource mRemoteDataSource;
+
+    private String mLastRequestSequence;
 
     public static DataRepository getInstance() {
         if (INSTANCE == null) {
@@ -19,11 +21,26 @@ public class DataRepository implements DataSource {
 
     private DataRepository() {
         mLocalDataSource = LocalDataSource.getInstance();
-        mRemoteDataSoutce = RemoteDataSource.getInstance();
+        mRemoteDataSource = RemoteDataSource.getInstance();
     }
 
     @Override
     public void findRepositories(String query, SourceCallBack callBack) {
+        if (isCurrentAndLastQueriesAreSame(query)) {
+            mLocalDataSource.findRepositories(query, callBack);
+        } else {
+            mLastRequestSequence = query;
+            mRemoteDataSource.findRepositories(query, callBack);
+            mLocalDataSource.persistLastResponseData();
+        }
+    }
 
+    @Override
+    public void persistLastResponseData() {
+
+    }
+
+    private boolean isCurrentAndLastQueriesAreSame(String query) {
+        return mLastRequestSequence != null && mLastRequestSequence.toLowerCase().equals(query.toLowerCase());
     }
 }

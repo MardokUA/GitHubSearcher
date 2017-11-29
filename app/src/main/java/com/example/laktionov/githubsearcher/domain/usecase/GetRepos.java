@@ -18,20 +18,19 @@ public class GetRepos implements UseCase<GetRepos.RequestValues, GetRepos.Respon
     @Override
     public void execute(RequestValues values, UseCaseCallBack<ResponseValues> caseCallBack) {
         String query = values.getRequestString();
-        mDataRepository.findRepositories(query, mSourceCallback);
+        mDataRepository.findRepositories(query, new DataSource.SourceCallBack() {
+            @Override
+            public void onSuccess(List<Repository> repositories) {
+
+            }
+
+            @Override
+            public void onFailure() {
+
+            }
+        });
     }
 
-    private DataSource.SourceCallBack mSourceCallback = new DataSource.SourceCallBack() {
-        @Override
-        public void onSuccess(List<Repository> repositories) {
-
-        }
-
-        @Override
-        public void onFailure() {
-
-        }
-    };
 
     public static class RequestValues implements UseCase.RequestValues {
 

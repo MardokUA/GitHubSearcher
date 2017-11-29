@@ -1,15 +1,79 @@
 package com.example.laktionov.githubsearcher.search;
 
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.AppCompatButton;
+import android.support.v7.widget.AppCompatEditText;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 
 import com.example.laktionov.githubsearcher.R;
+import com.example.laktionov.githubsearcher.data.source.local.entity.Repository;
 
-public class SearchActivity extends AppCompatActivity {
+import java.util.List;
+
+public class SearchActivity extends AppCompatActivity implements SearchContract.View {
+
+    private SearchPresenterImp mPresenter;
+    private AppCompatButton mSearchButton;
+    private AppCompatEditText mSearchEditText;
+    private RecyclerView mSearchRecycler;
+    private SearchAdapter mSearchAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        iniPresenter();
+        iniViewElements();
+        initListeners();
+    }
+
+    private void iniPresenter() {
+        mPresenter = new SearchPresenterImp();
+        mPresenter.onInit(this);
+    }
+
+    private void iniViewElements() {
+        mSearchButton = findViewById(R.id.search_button);
+        mSearchEditText = findViewById(R.id.search_query);
+
+        mSearchRecycler = findViewById(R.id.search_recycler);
+        mSearchRecycler.setLayoutManager(new LinearLayoutManager(this));
+        mSearchRecycler.setHasFixedSize(true);
+        mSearchAdapter = new SearchAdapter();
+        mSearchRecycler.setAdapter(mSearchAdapter);
+    }
+
+    private void initListeners() {
+        mSearchButton.setOnClickListener(view -> {
+            mPresenter.onSearchCLick(mSearchEditText.getText().toString());
+        });
+    }
+
+
+    @Override
+    public void showSearchResult(List<Repository> repositories) {
+
+    }
+
+    @Override
+    public void showSearchResult(String message) {
+
+    }
+
+    @Override
+    public void showErrorMessage(int messageId) {
+        Snackbar.make(findViewById(R.id.search_container), messageId, Snackbar.LENGTH_SHORT).show();
+    }
+
+    @Override
+    protected void onDestroy() {
+        if (mPresenter != null) {
+            mPresenter.onDestroy();
+        }
+        super.onDestroy();
     }
 }
