@@ -1,5 +1,7 @@
 package com.example.laktionov.githubsearcher.domain.usecase;
 
+import com.example.laktionov.githubsearcher.data.source.Error;
+
 public interface UseCase<Q extends UseCase.RequestValues, P extends UseCase.ResponseValues> {
 
     void execute(Q values, UseCaseCallBack<P> caseCallBack);
@@ -15,7 +17,7 @@ public interface UseCase<Q extends UseCase.RequestValues, P extends UseCase.Resp
     interface UseCaseCallBack<K> {
         void onSuccess(K response);
 
-        void onFailure();
+        void onFailure(Error error);
     }
 
 }

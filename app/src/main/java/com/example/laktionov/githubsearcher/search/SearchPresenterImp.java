@@ -1,8 +1,11 @@
 package com.example.laktionov.githubsearcher.search;
 
 import com.example.laktionov.githubsearcher.data.source.Error;
+import com.example.laktionov.githubsearcher.data.source.local.entity.RepositoryInfo;
 import com.example.laktionov.githubsearcher.domain.usecase.GetRepos;
 import com.example.laktionov.githubsearcher.domain.usecase.UseCase;
+
+import java.util.List;
 
 public class SearchPresenterImp implements SearchContract.Presenter {
 
@@ -31,14 +34,20 @@ public class SearchPresenterImp implements SearchContract.Presenter {
         mGetUseCase.execute(new GetRepos.RequestValues(query), new UseCase.UseCaseCallBack<GetRepos.ResponseValues>() {
             @Override
             public void onSuccess(GetRepos.ResponseValues response) {
-
+                showResult(response.getResponseReps());
             }
 
             @Override
-            public void onFailure() {
-
+            public void onFailure(Error error) {
+                showError(error);
             }
         });
+    }
+
+    private void showResult(List<RepositoryInfo> repositoryInfoList) {
+        if (mView != null) {
+            mView.showSearchResult(repositoryInfoList);
+        }
     }
 
     private void showError(Error error) {

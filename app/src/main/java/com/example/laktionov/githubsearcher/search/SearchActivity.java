@@ -9,7 +9,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 
 import com.example.laktionov.githubsearcher.R;
-import com.example.laktionov.githubsearcher.data.source.local.entity.Repository;
+import com.example.laktionov.githubsearcher.data.source.local.entity.RepositoryInfo;
 
 import java.util.List;
 
@@ -24,7 +24,7 @@ public class SearchActivity extends AppCompatActivity implements SearchContract.
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_search);
 
         iniPresenter();
         iniViewElements();
@@ -55,7 +55,7 @@ public class SearchActivity extends AppCompatActivity implements SearchContract.
 
 
     @Override
-    public void showSearchResult(List<Repository> repositories) {
+    public void showSearchResult(List<RepositoryInfo> repositories) {
 
     }
 

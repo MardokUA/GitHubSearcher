@@ -7,25 +7,25 @@ public class RemoteRepository {
 
     @Expose
     @SerializedName("id")
-    public Integer mId;
+    private Integer mId;
     @Expose
     @SerializedName("name")
-    public String mShortName;
+    private String mShortName;
     @Expose
     @SerializedName("full_name")
-    public String mFullName;
+    private String mFullName;
     @Expose
     @SerializedName("owner")
-    public Owner mOwner;
+    private Owner mOwner;
     @Expose
     @SerializedName("private")
-    public Boolean mIsPrivate;
+    private Boolean mIsPrivate;
     @Expose
     @SerializedName("html_url")
-    public String mUrl;
+    private String mUrl;
     @Expose
     @SerializedName("created_at")
-    public String mCreated;
+    private String mCreated;
 
     public RemoteRepository() {
     }
@@ -62,7 +62,7 @@ public class RemoteRepository {
         this.mOwner = mOwner;
     }
 
-    public Boolean getmIsPrivate() {
+    public Boolean getIsPrivate() {
         return mIsPrivate;
     }
 

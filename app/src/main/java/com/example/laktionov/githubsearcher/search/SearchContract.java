@@ -2,7 +2,7 @@ package com.example.laktionov.githubsearcher.search;
 
 import android.support.annotation.StringRes;
 
-import com.example.laktionov.githubsearcher.data.source.local.entity.Repository;
+import com.example.laktionov.githubsearcher.data.source.local.entity.RepositoryInfo;
 
 import java.util.List;
 
@@ -19,7 +19,7 @@ public interface SearchContract {
 
     interface View {
 
-        void showSearchResult(List<Repository> repositories);
+        void showSearchResult(List<RepositoryInfo> repositories);
 
         void showSearchResult(String message);
 

@@ -7,16 +7,16 @@ public class Owner {
 
     @Expose
     @SerializedName("login")
-    public String mLogin;
+    private String mLogin;
     @Expose
     @SerializedName("id")
-    public Integer mId;
+    private Integer mId;
     @Expose
     @SerializedName("avatar_url")
-    public String mAvatarUrl;
+    private String mAvatarUrl;
     @Expose
     @SerializedName("html_url")
-    public String mUrl;
+    private String mUrl;
 
     public Owner() {
     }

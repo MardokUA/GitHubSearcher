@@ -2,8 +2,8 @@ package com.example.laktionov.githubsearcher.domain.usecase;
 
 import com.example.laktionov.githubsearcher.data.DataRepository;
 import com.example.laktionov.githubsearcher.data.DataSource;
-import com.example.laktionov.githubsearcher.data.source.local.entity.Repository;
-import com.example.laktionov.githubsearcher.data.source.remote.entity.RemoteRepository;
+import com.example.laktionov.githubsearcher.data.source.Error;
+import com.example.laktionov.githubsearcher.data.source.local.entity.RepositoryInfo;
 
 import java.util.List;
 
@@ -20,13 +20,14 @@ public class GetRepos implements UseCase<GetRepos.RequestValues, GetRepos.Respon
         String query = values.getRequestString();
         mDataRepository.findRepositories(query, new DataSource.SourceCallBack() {
             @Override
-            public void onSuccess(List<Repository> repositories) {
-
+            public void onSuccess(List<RepositoryInfo> repositories) {
+                GetRepos.ResponseValues responseValues = new ResponseValues(repositories);
+                caseCallBack.onSuccess(responseValues);
             }
 
             @Override
-            public void onFailure() {
-
+            public void onFailure(Error error) {
+                caseCallBack.onFailure(error);
             }
         });
     }
@@ -47,13 +48,13 @@ public class GetRepos implements UseCase<GetRepos.RequestValues, GetRepos.Respon
 
     public static class ResponseValues implements UseCase.ResponseValues {
 
-        private final List<RemoteRepository> mResponseReps;
+        private final List<RepositoryInfo> mResponseReps;
 
-        public ResponseValues(List<RemoteRepository> mResponseReps) {
+        public ResponseValues(List<RepositoryInfo> mResponseReps) {
             this.mResponseReps = mResponseReps;
         }
 
-        public List<RemoteRepository> getResponseReps() {
+        public List<RepositoryInfo> getResponseReps() {
             return mResponseReps;
         }
     }

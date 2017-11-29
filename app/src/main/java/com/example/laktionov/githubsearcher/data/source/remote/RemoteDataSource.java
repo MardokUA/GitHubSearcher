@@ -1,13 +1,15 @@
 package com.example.laktionov.githubsearcher.data.source.remote;
 
 import com.example.laktionov.githubsearcher.data.DataSource;
+import com.example.laktionov.githubsearcher.data.source.Error;
+import com.example.laktionov.githubsearcher.data.source.local.entity.RepositoryInfo;
 import com.example.laktionov.githubsearcher.data.source.remote.entity.RemoteRepository;
-import com.example.laktionov.githubsearcher.data.source.remote.entity.RepositoryRequest;
 
+import java.util.ArrayList;
 import java.util.List;
 
-import io.reactivex.Observable;
-import io.reactivex.functions.Consumer;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.schedulers.Schedulers;
 
 public class RemoteDataSource implements DataSource {
 
@@ -28,15 +30,34 @@ public class RemoteDataSource implements DataSource {
 
     @Override
     public void findRepositories(String query, SourceCallBack callBack) {
-        mSearchApi.searchRepos(query).subscribe(repositoryRequest -> {
+        mSearchApi.searchRepos(query)
+                .observeOn(AndroidSchedulers.mainThread())
+                .map(mRepositoryRequest ->
+                        transmorph(mRepositoryRequest.getRepos()))
+                .subscribeOn(Schedulers.io())
+                .subscribe(callBack::onSuccess, throwable -> callBack.onFailure(new Error(Error.ERROR_FOUND_NOTHING)));
+    }
 
-        }, throwable -> {
-
-        });
+    private List<RepositoryInfo> transmorph(List<RemoteRepository> remoteRepositoryList) {
+        List<RepositoryInfo> repositoryInfoList = new ArrayList<>(100);
+        for (RemoteRepository remoteRepository : remoteRepositoryList) {
+            RepositoryInfo item = new RepositoryInfo.Builder()
+                    .withInfoId(remoteRepository.getId())
+                    .withNameId(remoteRepository.getFullName())
+                    .withUrl(remoteRepository.getUrl())
+                    .withStatus(remoteRepository.getIsPrivate())
+                    .withLogin(remoteRepository.getOwner().getLogin())
+                    .withAvatar(remoteRepository.getOwner().getAvatarUrl())
+                    .withUserUrl(remoteRepository.getOwner().getUrl())
+                    .withCreatedDate(remoteRepository.getCreated())
+                    .build();
+            repositoryInfoList.add(item);
+        }
+        return repositoryInfoList;
     }
 
     @Override
-    public void persistLastResponseData() {
+    public void persistLastResponseData(List<RepositoryInfo> repositoryInfoList) {
 
     }
 }

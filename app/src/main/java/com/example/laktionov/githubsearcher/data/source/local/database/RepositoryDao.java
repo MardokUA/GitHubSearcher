@@ -4,6 +4,7 @@ import android.arch.persistence.room.Dao;
 import android.arch.persistence.room.Insert;
 import android.arch.persistence.room.Query;
 
+import com.example.laktionov.githubsearcher.data.source.local.entity.RepositoryInfo;
 import com.example.laktionov.githubsearcher.data.source.remote.entity.RemoteRepository;
 
 import java.util.List;
@@ -12,11 +13,11 @@ import java.util.List;
 public interface RepositoryDao {
 
     @Insert
-    void persistData(RemoteRepository... repositories);
+    void persistData(RepositoryInfo... repositories);
 
     @Query("DELETE FROM local_reps")
     void deletePersistData();
 
     @Query("SELECT * FROM local_reps")
-    List<RemoteRepository> getAllLocalData();
+    List<RepositoryInfo> getAllLocalData();
 }
