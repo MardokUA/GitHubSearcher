@@ -6,4 +6,12 @@
     <string name="error_internet_connection">Internet connection error</string>
     <string name="error_external">Something went wrong :(</string>
     <string name="search_button_text">Find!</string>
+
+    <string name="repository_create_date">Created:</string>
+    <string name="repository_state">Status:</string>
+    <string name="repository_owner">Owner:</string>
+    <string name="repository_owner_url">Owner url:</string>
+
+    <string name="private_status_text">private</string>
+    <string name="public_status_text">public</string>
 </resources>

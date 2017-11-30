@@ -43,7 +43,7 @@ public class SearchActivity extends AppCompatActivity implements SearchContract.
         mSearchRecycler = findViewById(R.id.search_recycler);
         mSearchRecycler.setLayoutManager(new LinearLayoutManager(this));
         mSearchRecycler.setHasFixedSize(true);
-        mSearchAdapter = new SearchAdapter();
+        mSearchAdapter = new SearchAdapter(this);
         mSearchRecycler.setAdapter(mSearchAdapter);
     }
 
@@ -56,12 +56,9 @@ public class SearchActivity extends AppCompatActivity implements SearchContract.
 
     @Override
     public void showSearchResult(List<RepositoryInfo> repositories) {
-
-    }
-
-    @Override
-    public void showSearchResult(String message) {
-
+        if (mSearchAdapter != null) {
+            mSearchAdapter.addItems(repositories);
+        }
     }
 
     @Override

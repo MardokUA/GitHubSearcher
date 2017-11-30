@@ -21,8 +21,6 @@ public interface SearchContract {
 
         void showSearchResult(List<RepositoryInfo> repositories);
 
-        void showSearchResult(String message);
-
         void showErrorMessage(@StringRes int messageId);
 
     }

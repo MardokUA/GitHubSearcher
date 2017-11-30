@@ -17,7 +17,7 @@ public class RepositoryInfo {
     @ColumnInfo(name = "repo_status")
     private Integer mPrivate;
     @ColumnInfo(name = "user_login_name")
-    private String mLogin;
+    private String mUserLogin;
     @ColumnInfo(name = "user_avatar_url")
     private String mAvatarUrl;
     @ColumnInfo(name = "user_url")
@@ -60,12 +60,12 @@ public class RepositoryInfo {
         this.mPrivate = mIsPrivate;
     }
 
-    public String getLogin() {
-        return mLogin;
+    public String getUserLogin() {
+        return mUserLogin;
     }
 
-    public void setLogin(String mLogin) {
-        this.mLogin = mLogin;
+    public void setUserLogin(String mLogin) {
+        this.mUserLogin = mLogin;
     }
 
     public String getAvatarUrl() {
@@ -121,7 +121,7 @@ public class RepositoryInfo {
         }
 
         public Builder withLogin(String login) {
-            mRepositoryInfo.mLogin = login;
+            mRepositoryInfo.mUserLogin = login;
             return this;
         }
 
