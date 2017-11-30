@@ -9,17 +9,21 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.laktionov.githubsearcher.R;
+import com.example.laktionov.githubsearcher.custom.CircleTransform;
 import com.example.laktionov.githubsearcher.data.source.local.entity.RepositoryInfo;
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static com.example.laktionov.githubsearcher.custom.CircleTransform.IMAGE_SIZE;
 
 public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.SearchViewHolder> {
 
     private List<RepositoryInfo> mRepositoryList;
     private String[] mStatusText;
 
-    public SearchAdapter(Context context) {
+    SearchAdapter(Context context) {
         mRepositoryList = new ArrayList<>();
         mStatusText = new String[]{context.getString(R.string.private_status_text), context.getString(R.string.public_status_text)};
     }
@@ -34,6 +38,14 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.SearchView
     public void onBindViewHolder(SearchViewHolder holder, int position) {
         RepositoryInfo repositoryInfo = mRepositoryList.get(position);
 
+        Picasso.with(holder.mAvatar.getContext())
+                .load(repositoryInfo.getAvatarUrl())
+                .resize(IMAGE_SIZE, IMAGE_SIZE)
+                .centerCrop()
+                .placeholder(R.drawable.image_placeholder)
+                .transform(new CircleTransform())
+                .into(holder.mAvatar);
+
         holder.mRepositoryName.setText(repositoryInfo.getFullName());
         holder.mRepositoryUrl.setText(repositoryInfo.getRepoUrl());
         holder.mOwnerLogin.setText(repositoryInfo.getUserLogin());
@@ -47,7 +59,7 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.SearchView
         return mRepositoryList.size();
     }
 
-    public void addItems(List<RepositoryInfo> items) {
+    void addItems(List<RepositoryInfo> items) {
         mRepositoryList.clear();
         mRepositoryList.addAll(items);
         notifyDataSetChanged();

@@ -1,5 +1,6 @@
 package com.example.laktionov.githubsearcher.search;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
@@ -7,6 +8,7 @@ import android.support.v7.widget.AppCompatButton;
 import android.support.v7.widget.AppCompatEditText;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.inputmethod.InputMethodManager;
 
 import com.example.laktionov.githubsearcher.R;
 import com.example.laktionov.githubsearcher.data.source.local.entity.RepositoryInfo;
@@ -49,10 +51,17 @@ public class SearchActivity extends AppCompatActivity implements SearchContract.
 
     private void initListeners() {
         mSearchButton.setOnClickListener(view -> {
+            closeKeyboard();
             mPresenter.onSearchCLick(mSearchEditText.getText().toString());
         });
     }
 
+    private void closeKeyboard() {
+        InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+        if (imm != null) {
+            imm.hideSoftInputFromWindow(mSearchEditText.getWindowToken(), 0);
+        }
+    }
 
     @Override
     public void showSearchResult(List<RepositoryInfo> repositories) {

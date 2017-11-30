@@ -14,4 +14,5 @@
 
     <string name="private_status_text">private</string>
     <string name="public_status_text">public</string>
+    <string name="title_activity_spalsh">SpalshActivity</string>
 </resources>
