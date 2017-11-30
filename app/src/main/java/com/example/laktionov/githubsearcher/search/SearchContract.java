@@ -14,6 +14,8 @@ public interface SearchContract {
 
         void onSearchCLick(String query);
 
+        void showLastRequestResults(String query);
+
         void onDestroy();
     }
 
@@ -22,6 +24,8 @@ public interface SearchContract {
         void showSearchResult(List<RepositoryInfo> repositories);
 
         void showErrorMessage(@StringRes int messageId);
+
+        void showProgress(boolean isShown);
 
     }
 }

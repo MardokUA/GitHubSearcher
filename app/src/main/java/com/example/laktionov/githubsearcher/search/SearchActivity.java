@@ -8,7 +8,9 @@ import android.support.v7.widget.AppCompatButton;
 import android.support.v7.widget.AppCompatEditText;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.View;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.ProgressBar;
 
 import com.example.laktionov.githubsearcher.R;
 import com.example.laktionov.githubsearcher.data.source.local.entity.RepositoryInfo;
@@ -17,11 +19,14 @@ import java.util.List;
 
 public class SearchActivity extends AppCompatActivity implements SearchContract.View {
 
+    private final String LAST_REQUEST = "last_request";
+
     private SearchPresenterImp mPresenter;
     private AppCompatButton mSearchButton;
     private AppCompatEditText mSearchEditText;
     private RecyclerView mSearchRecycler;
     private SearchAdapter mSearchAdapter;
+    private ProgressBar mProgressBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,6 +36,10 @@ public class SearchActivity extends AppCompatActivity implements SearchContract.
         iniPresenter();
         iniViewElements();
         initListeners();
+        if (savedInstanceState != null) {
+            mSearchEditText.clearFocus();
+            mPresenter.showLastRequestResults(savedInstanceState.getString(LAST_REQUEST));
+        }
     }
 
     private void iniPresenter() {
@@ -41,12 +50,14 @@ public class SearchActivity extends AppCompatActivity implements SearchContract.
     private void iniViewElements() {
         mSearchButton = findViewById(R.id.search_button);
         mSearchEditText = findViewById(R.id.search_query);
+        mProgressBar = findViewById(R.id.search_progress_bar);
 
         mSearchRecycler = findViewById(R.id.search_recycler);
         mSearchRecycler.setLayoutManager(new LinearLayoutManager(this));
         mSearchRecycler.setHasFixedSize(true);
         mSearchAdapter = new SearchAdapter(this);
         mSearchRecycler.setAdapter(mSearchAdapter);
+        mSearchRecycler.addOnScrollListener(mPresenter);
     }
 
     private void initListeners() {
@@ -54,13 +65,6 @@ public class SearchActivity extends AppCompatActivity implements SearchContract.
             closeKeyboard();
             mPresenter.onSearchCLick(mSearchEditText.getText().toString());
         });
-    }
-
-    private void closeKeyboard() {
-        InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-        if (imm != null) {
-            imm.hideSoftInputFromWindow(mSearchEditText.getWindowToken(), 0);
-        }
     }
 
     @Override
@@ -76,10 +80,24 @@ public class SearchActivity extends AppCompatActivity implements SearchContract.
     }
 
     @Override
-    protected void onDestroy() {
-        if (mPresenter != null) {
-            mPresenter.onDestroy();
+    public void showProgress(boolean isShown) {
+        mProgressBar.setVisibility(isShown ? View.VISIBLE : View.GONE);
+        mSearchRecycler.setVisibility(isShown ? View.GONE : View.VISIBLE);
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        if (mSearchEditText != null && !mSearchEditText.getText().toString().trim().isEmpty()) {
+            outState.putString(LAST_REQUEST, mSearchEditText.getText().toString());
         }
-        super.onDestroy();
+        super.onSaveInstanceState(outState);
+    }
+
+    private void closeKeyboard() {
+        InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+        if (imm != null) {
+            imm.hideSoftInputFromWindow(mSearchEditText.getWindowToken(), 0);
+        }
+        mSearchEditText.clearFocus();
     }
 }

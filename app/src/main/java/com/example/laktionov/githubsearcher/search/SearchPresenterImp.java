@@ -1,5 +1,7 @@
 package com.example.laktionov.githubsearcher.search;
 
+import android.support.v7.widget.RecyclerView;
+
 import com.example.laktionov.githubsearcher.data.source.Error;
 import com.example.laktionov.githubsearcher.data.source.local.entity.RepositoryInfo;
 import com.example.laktionov.githubsearcher.domain.usecase.GetRepos;
@@ -7,10 +9,12 @@ import com.example.laktionov.githubsearcher.domain.usecase.UseCase;
 
 import java.util.List;
 
-public class SearchPresenterImp implements SearchContract.Presenter {
+public class SearchPresenterImp extends RecyclerView.OnScrollListener implements SearchContract.Presenter {
 
     private SearchContract.View mView;
     private GetRepos mGetUseCase;
+
+    private int pastVisiblesItems, visibleItemCount, totalItemCount;
 
     SearchPresenterImp() {
         mGetUseCase = new GetRepos();
@@ -22,18 +26,26 @@ public class SearchPresenterImp implements SearchContract.Presenter {
     }
 
     @Override
-    public void onSearchCLick(String query) {
-        if (query.trim().length() == 0) {
-            showError(new Error(Error.ERROR_EMPTY_QUERY));
-        } else {
+    public void showLastRequestResults(String query) {
+        if (isQueryIsValid(query))
             checkRepos(query);
+    }
+
+    @Override
+    public void onSearchCLick(String query) {
+        if (isQueryIsValid(query)) {
+            checkRepos(query);
+        } else {
+            showError(new Error(Error.ERROR_EMPTY_QUERY));
         }
     }
 
     private void checkRepos(String query) {
+        changeProgressState(true);
         mGetUseCase.execute(new GetRepos.RequestValues(query), new UseCase.UseCaseCallBack<GetRepos.ResponseValues>() {
             @Override
             public void onSuccess(GetRepos.ResponseValues response) {
+                changeProgressState(false);
                 showResult(response.getResponseReps());
             }
 
@@ -44,6 +56,12 @@ public class SearchPresenterImp implements SearchContract.Presenter {
         });
     }
 
+    private void changeProgressState(boolean isShown) {
+        if (mView != null) {
+            mView.showProgress(isShown);
+        }
+    }
+
     private void showResult(List<RepositoryInfo> repositoryInfoList) {
         if (mView != null) {
             mView.showSearchResult(repositoryInfoList);
@@ -52,12 +70,24 @@ public class SearchPresenterImp implements SearchContract.Presenter {
 
     private void showError(Error error) {
         if (mView != null) {
+            changeProgressState(false);
             mView.showErrorMessage(error.getError());
         }
+    }
+
+    private boolean isQueryIsValid(String query) {
+        return query != null && query.trim().length() > 0;
     }
 
     @Override
     public void onDestroy() {
         mView = null;
+    }
+
+    @Override
+    public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+        super.onScrolled(recyclerView, dx, dy);
+        if (dy > 0) {
+        }
     }
 }

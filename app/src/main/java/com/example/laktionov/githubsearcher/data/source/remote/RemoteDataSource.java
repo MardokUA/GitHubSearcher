@@ -4,11 +4,15 @@ import com.example.laktionov.githubsearcher.data.DataSource;
 import com.example.laktionov.githubsearcher.data.source.Error;
 import com.example.laktionov.githubsearcher.data.source.local.entity.RepositoryInfo;
 import com.example.laktionov.githubsearcher.data.source.remote.entity.RemoteRepository;
+import com.example.laktionov.githubsearcher.data.source.remote.entity.RepositoryRequest;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
+import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 
 public class RemoteDataSource implements DataSource {
@@ -32,6 +36,7 @@ public class RemoteDataSource implements DataSource {
     public void findRepositories(String query, SourceCallBack callBack) {
         mSearchApi.searchRepos(query)
                 .observeOn(AndroidSchedulers.mainThread())
+//                .delay(2, TimeUnit.SECONDS) // help to check cancel button click;
                 .map(mRepositoryRequest ->
                         transmorph(mRepositoryRequest.getRepos()))
                 .subscribeOn(Schedulers.io())

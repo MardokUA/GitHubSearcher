@@ -37,11 +37,11 @@ public class DataRepository implements DataSource {
             mRemoteDataSource.findRepositories(query, new SourceCallBack() {
                 @Override
                 public void onSuccess(List<RepositoryInfo> repositories) {
-                    mLocalDataSource.persistLastResponseData(repositories);
                     if (repositories.isEmpty()) {
                         callBack.onFailure(new Error(Error.ERROR_FOUND_NOTHING));
                     } else {
                         callBack.onSuccess(repositories);
+                        mLocalDataSource.persistLastResponseData(repositories);
                     }
                 }
 

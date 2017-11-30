@@ -11,6 +11,7 @@ import android.widget.TextView;
 import com.example.laktionov.githubsearcher.R;
 import com.example.laktionov.githubsearcher.custom.CircleTransform;
 import com.example.laktionov.githubsearcher.data.source.local.entity.RepositoryInfo;
+import com.squareup.picasso.MemoryPolicy;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -52,6 +53,11 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.SearchView
         holder.mOwnerUrl.setText(repositoryInfo.getUserUrl());
         holder.mRepositoryStatus.setText(repositoryInfo.getPrivate() == 1 ? mStatusText[0] : mStatusText[1]);
         holder.mRepositoryCreatedTime.setText(repositoryInfo.getCreated());
+    }
+
+    @Override
+    public void onViewRecycled(SearchViewHolder holder) {
+        super.onViewRecycled(holder);
     }
 
     @Override
