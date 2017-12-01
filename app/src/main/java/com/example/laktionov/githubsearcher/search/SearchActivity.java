@@ -57,7 +57,6 @@ public class SearchActivity extends AppCompatActivity implements SearchContract.
         mSearchRecycler.setHasFixedSize(true);
         mSearchAdapter = new SearchAdapter(this);
         mSearchRecycler.setAdapter(mSearchAdapter);
-        mSearchRecycler.addOnScrollListener(mPresenter);
     }
 
     private void initListeners() {

@@ -6,9 +6,11 @@ public class Error {
 
     public static final int ERROR_EMPTY_QUERY = 44;
     public static final int ERROR_FOUND_NOTHING = 45;
-    public static final int ERROR_INTERNET_CONNECTION = 46;
+    public static final int ERROR_SERVER_RESPONSE = 46;
+    public static final int ERROR_INTERNAL = 47;
 
     private final int mError;
+    private String mMessage;
 
     public Error(int mError) {
         this.mError = mError;
@@ -23,7 +25,7 @@ public class Error {
             case ERROR_FOUND_NOTHING:
                 messageId = R.string.error_find_nothing;
                 break;
-            case ERROR_INTERNET_CONNECTION:
+            case ERROR_SERVER_RESPONSE:
                 messageId = R.string.error_internet_connection;
                 break;
             default:
@@ -31,5 +33,9 @@ public class Error {
                 break;
         }
         return messageId;
+    }
+
+    public void setMessage(String message) {
+        mMessage = message;
     }
 }

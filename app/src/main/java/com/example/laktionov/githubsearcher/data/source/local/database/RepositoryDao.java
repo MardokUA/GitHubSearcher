@@ -6,12 +6,10 @@ import android.arch.persistence.room.OnConflictStrategy;
 import android.arch.persistence.room.Query;
 
 import com.example.laktionov.githubsearcher.data.source.local.entity.RepositoryInfo;
-import com.example.laktionov.githubsearcher.data.source.remote.entity.RemoteRepository;
 
 import java.util.List;
 
 import io.reactivex.Maybe;
-import io.reactivex.Observable;
 
 @Dao
 public interface RepositoryDao {
@@ -22,6 +20,6 @@ public interface RepositoryDao {
     @Query("DELETE FROM local_reps")
     void deletePersistData();
 
-    @Query("SELECT * FROM local_reps")
-    Maybe<List<RepositoryInfo>> getAllLocalData();
+    @Query("SELECT * FROM local_reps WHERE `query` LIKE :query")
+    Maybe<List<RepositoryInfo>> getAllLocalData(String query);
 }

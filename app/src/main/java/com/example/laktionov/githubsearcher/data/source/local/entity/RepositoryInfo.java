@@ -24,6 +24,8 @@ public class RepositoryInfo {
     private String mUserUrl;
     @ColumnInfo(name = "created_time")
     private String mCreated;
+    @ColumnInfo(name = "query")
+    private String mQuery;
 
     public RepositoryInfo() {
     }
@@ -92,12 +94,25 @@ public class RepositoryInfo {
         this.mCreated = mCreated;
     }
 
+    public String getQuery() {
+        return mQuery;
+    }
+
+    public void setQuery(String query) {
+        mQuery = query;
+    }
+
     public static class Builder {
 
         private RepositoryInfo mRepositoryInfo;
 
         public Builder() {
             mRepositoryInfo = new RepositoryInfo();
+        }
+
+        public Builder withQuery(String query) {
+            mRepositoryInfo.mQuery = query;
+            return this;
         }
 
         public Builder withInfoId(Integer id) {
@@ -136,7 +151,7 @@ public class RepositoryInfo {
         }
 
         public Builder withCreatedDate(String createdDate) {
-            mRepositoryInfo.mCreated = createdDate;
+            mRepositoryInfo.mCreated = createdDate.replaceAll("([T]\\d)|Z", " ");
             return this;
         }
 

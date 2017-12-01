@@ -1,7 +1,5 @@
 package com.example.laktionov.githubsearcher.search;
 
-import android.support.v7.widget.RecyclerView;
-
 import com.example.laktionov.githubsearcher.data.source.Error;
 import com.example.laktionov.githubsearcher.data.source.local.entity.RepositoryInfo;
 import com.example.laktionov.githubsearcher.domain.usecase.GetRepos;
@@ -9,12 +7,10 @@ import com.example.laktionov.githubsearcher.domain.usecase.UseCase;
 
 import java.util.List;
 
-public class SearchPresenterImp extends RecyclerView.OnScrollListener implements SearchContract.Presenter {
+public class SearchPresenterImp implements SearchContract.Presenter {
 
     private SearchContract.View mView;
     private GetRepos mGetUseCase;
-
-    private int pastVisiblesItems, visibleItemCount, totalItemCount;
 
     SearchPresenterImp() {
         mGetUseCase = new GetRepos();
@@ -84,10 +80,4 @@ public class SearchPresenterImp extends RecyclerView.OnScrollListener implements
         mView = null;
     }
 
-    @Override
-    public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-        super.onScrolled(recyclerView, dx, dy);
-        if (dy > 0) {
-        }
-    }
 }

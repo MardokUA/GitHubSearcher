@@ -10,7 +10,7 @@ public interface DataSource {
 
     void findRepositories(String query, SourceCallBack callBack);
 
-    void persistLastResponseData(List<RepositoryInfo> repositoryInfoList);
+    void persistResponseData(List<RepositoryInfo> repositoryInfoList);
 
     interface SourceCallBack {
 
