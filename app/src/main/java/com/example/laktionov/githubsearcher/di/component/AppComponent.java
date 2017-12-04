@@ -10,7 +10,10 @@ import javax.inject.Singleton;
 
 import dagger.Component;
 
-@Component(modules = {NetworkModule.class, AppModule.class, LocalModule.class})
+@Component(modules = {
+        NetworkModule.class,
+        AppModule.class,
+        LocalModule.class})
 @Singleton
 
 public interface AppComponent {
