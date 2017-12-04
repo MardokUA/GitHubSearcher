@@ -28,6 +28,8 @@ public class SearchActivity extends AppCompatActivity implements SearchContract.
     private SearchAdapter mSearchAdapter;
     private ProgressBar mProgressBar;
 
+    private String mLastSuccessQuery;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -37,7 +39,6 @@ public class SearchActivity extends AppCompatActivity implements SearchContract.
         iniViewElements();
         initListeners();
         if (savedInstanceState != null) {
-            mSearchEditText.clearFocus();
             mPresenter.showLastRequestResults(savedInstanceState.getString(LAST_REQUEST));
         }
     }
@@ -85,9 +86,14 @@ public class SearchActivity extends AppCompatActivity implements SearchContract.
     }
 
     @Override
+    public void setSuccessResult(String result) {
+        mLastSuccessQuery = result;
+    }
+
+    @Override
     protected void onSaveInstanceState(Bundle outState) {
-        if (mSearchEditText != null && !mSearchEditText.getText().toString().trim().isEmpty()) {
-            outState.putString(LAST_REQUEST, mSearchEditText.getText().toString());
+        if (mLastSuccessQuery != null) {
+            outState.putString(LAST_REQUEST, mLastSuccessQuery);
         }
         super.onSaveInstanceState(outState);
     }
@@ -98,5 +104,13 @@ public class SearchActivity extends AppCompatActivity implements SearchContract.
             imm.hideSoftInputFromWindow(mSearchEditText.getWindowToken(), 0);
         }
         mSearchEditText.clearFocus();
+    }
+
+    @Override
+    protected void onDestroy() {
+        if (mPresenter != null) {
+            mPresenter.onDestroy();
+        }
+        super.onDestroy();
     }
 }

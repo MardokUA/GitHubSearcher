@@ -21,5 +21,8 @@ public interface RepositoryDao {
     void deletePersistData();
 
     @Query("SELECT * FROM local_reps WHERE `query` LIKE :query")
-    Maybe<List<RepositoryInfo>> getAllLocalData(String query);
+    Maybe<List<RepositoryInfo>> getCachedLocalDataWithQuery(String query);
+
+//    @Query("SELECT * FROM local_reps")
+//    Maybe<List<RepositoryInfo>> getCachedData();
 }

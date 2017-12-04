@@ -22,7 +22,7 @@ public class LocalDataSource extends BaseDataSource {
 
     @Override
     public void findRepositories(String query, SourceCallBack callBack) {
-        mRepositoryDao.getAllLocalData(query)
+        mRepositoryDao.getCachedLocalDataWithQuery(query)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(callBack::onSuccess);

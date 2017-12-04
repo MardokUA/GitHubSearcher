@@ -42,7 +42,7 @@ public class SearchPresenterImp implements SearchContract.Presenter {
             @Override
             public void onSuccess(GetRepos.ResponseValues response) {
                 changeProgressState(false);
-                showResult(response.getResponseReps());
+                showResult(response.getResponseReps(), query);
             }
 
             @Override
@@ -58,9 +58,10 @@ public class SearchPresenterImp implements SearchContract.Presenter {
         }
     }
 
-    private void showResult(List<RepositoryInfo> repositoryInfoList) {
+    private void showResult(List<RepositoryInfo> repositoryInfoList, String query) {
         if (mView != null) {
             mView.showSearchResult(repositoryInfoList);
+            mView.setSuccessResult(query);
         }
     }
 
