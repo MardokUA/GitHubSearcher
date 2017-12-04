@@ -27,5 +27,4 @@ public class LocalModule {
     RepositoryDao providesRepositoryDao(LocalDataBase localDataBase) {
         return localDataBase.getDao();
     }
-
 }

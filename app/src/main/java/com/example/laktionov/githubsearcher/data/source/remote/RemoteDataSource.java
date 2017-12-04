@@ -1,16 +1,13 @@
 package com.example.laktionov.githubsearcher.data.source.remote;
 
-import com.example.laktionov.githubsearcher.application.GitHubSearcher;
 import com.example.laktionov.githubsearcher.data.source.BaseDataSource;
 import com.example.laktionov.githubsearcher.data.source.Error;
 import com.example.laktionov.githubsearcher.data.source.local.entity.RepositoryInfo;
 import com.example.laktionov.githubsearcher.data.source.remote.entity.RemoteRepository;
-import com.example.laktionov.githubsearcher.di.component.AppComponent;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -19,19 +16,10 @@ import io.reactivex.schedulers.Schedulers;
 @Singleton
 public class RemoteDataSource extends BaseDataSource {
 
-    private static RemoteDataSource INSTANCE;
-    @Inject
-    SearchApi mSearchApi;
+    private final SearchApi mSearchApi;
 
-    public static RemoteDataSource getInstance() {
-        if (INSTANCE == null) {
-            INSTANCE = new RemoteDataSource();
-        }
-        return INSTANCE;
-    }
-
-    private RemoteDataSource() {
-        GitHubSearcher.getAppComponent().inject(this);
+    public RemoteDataSource(SearchApi searchApi) {
+        mSearchApi = searchApi;
     }
 
     @Override

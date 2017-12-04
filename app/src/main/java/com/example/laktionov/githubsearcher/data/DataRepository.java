@@ -8,23 +8,17 @@ import com.example.laktionov.githubsearcher.data.source.remote.RemoteDataSource;
 
 import java.util.List;
 
+import javax.inject.Singleton;
+
+@Singleton
 public class DataRepository extends BaseDataSource {
 
-    private static DataRepository INSTANCE;
+    private final LocalDataSource mLocalDataSource;
+    private final RemoteDataSource mRemoteDataSource;
 
-    private DataSource mLocalDataSource;
-    private DataSource mRemoteDataSource;
-
-    public static DataRepository getInstance() {
-        if (INSTANCE == null) {
-            INSTANCE = new DataRepository();
-        }
-        return INSTANCE;
-    }
-
-    private DataRepository() {
-        mLocalDataSource = LocalDataSource.getInstance();
-        mRemoteDataSource = RemoteDataSource.getInstance();
+    public DataRepository(LocalDataSource localDataSource, RemoteDataSource remoteDataSource) {
+        mLocalDataSource = localDataSource;
+        mRemoteDataSource = remoteDataSource;
     }
 
     @Override

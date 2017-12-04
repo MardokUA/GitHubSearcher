@@ -7,6 +7,7 @@ import com.example.laktionov.githubsearcher.di.component.DaggerAppComponent;
 import com.example.laktionov.githubsearcher.di.module.AppModule;
 import com.example.laktionov.githubsearcher.di.module.LocalModule;
 import com.example.laktionov.githubsearcher.di.module.NetworkModule;
+import com.example.laktionov.githubsearcher.di.module.RepositoryModule;
 
 public class GitHubSearcher extends Application {
 
@@ -20,6 +21,7 @@ public class GitHubSearcher extends Application {
                 .appModule(new AppModule(this))
                 .networkModule(new NetworkModule())
                 .localModule(new LocalModule())
+                .repositoryModule(new RepositoryModule())
                 .build();
     }
 

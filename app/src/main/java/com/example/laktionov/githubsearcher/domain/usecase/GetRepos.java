@@ -1,5 +1,6 @@
 package com.example.laktionov.githubsearcher.domain.usecase;
 
+import com.example.laktionov.githubsearcher.application.GitHubSearcher;
 import com.example.laktionov.githubsearcher.data.DataRepository;
 import com.example.laktionov.githubsearcher.data.DataSource;
 import com.example.laktionov.githubsearcher.data.source.Error;
@@ -7,12 +8,15 @@ import com.example.laktionov.githubsearcher.data.source.local.entity.RepositoryI
 
 import java.util.List;
 
+import javax.inject.Inject;
+
 public class GetRepos implements UseCase<GetRepos.RequestValues, GetRepos.ResponseValues> {
 
-    private DataRepository mDataRepository;
+    @Inject
+    DataRepository mDataRepository;
 
     public GetRepos() {
-        mDataRepository = DataRepository.getInstance();
+        GitHubSearcher.getAppComponent().inject(this);
     }
 
     @Override
