@@ -6,6 +6,8 @@ public interface UseCase<Q extends UseCase.RequestValues, P extends UseCase.Resp
 
     void execute(Q values, UseCaseCallBack<P> caseCallBack);
 
+    void cancel();
+
     interface RequestValues {
 
     }

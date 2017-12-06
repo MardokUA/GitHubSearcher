@@ -1,5 +1,6 @@
 package com.example.laktionov.githubsearcher.search;
 
+import com.example.laktionov.githubsearcher.R;
 import com.example.laktionov.githubsearcher.data.source.Error;
 import com.example.laktionov.githubsearcher.data.source.local.entity.RepositoryInfo;
 import com.example.laktionov.githubsearcher.domain.usecase.GetRepos;
@@ -11,6 +12,11 @@ public class SearchPresenterImp implements SearchContract.Presenter {
 
     private SearchContract.View mView;
     private GetRepos mGetUseCase;
+    private ButtonState mCurrentButtonState = ButtonState.IDLE;
+
+    private enum ButtonState {
+        SEARCHING, IDLE
+    }
 
     SearchPresenterImp() {
         mGetUseCase = new GetRepos();
@@ -29,10 +35,17 @@ public class SearchPresenterImp implements SearchContract.Presenter {
 
     @Override
     public void onSearchCLick(String query) {
-        if (isQueryIsValid(query)) {
-            checkRepos(query);
-        } else {
-            showError(new Error(Error.ERROR_EMPTY_QUERY));
+        switch (mCurrentButtonState) {
+            case IDLE:
+                if (isQueryIsValid(query)) {
+                    checkRepos(query);
+                } else {
+                    showError(new Error(Error.ERROR_EMPTY_QUERY));
+                }
+                break;
+            case SEARCHING:
+                cancelRequest();
+                break;
         }
     }
 
@@ -52,7 +65,13 @@ public class SearchPresenterImp implements SearchContract.Presenter {
         });
     }
 
+    private void cancelRequest() {
+        mGetUseCase.cancel();
+        changeButtonState(ButtonState.IDLE);
+    }
+
     private void changeProgressState(boolean isShown) {
+        changeButtonState(isShown ? ButtonState.SEARCHING : ButtonState.IDLE);
         if (mView != null) {
             mView.showProgress(isShown);
         }
@@ -74,6 +93,11 @@ public class SearchPresenterImp implements SearchContract.Presenter {
 
     private boolean isQueryIsValid(String query) {
         return query != null && query.trim().length() > 0;
+    }
+
+    private void changeButtonState(ButtonState buttonState) {
+        mCurrentButtonState = buttonState;
+        mView.changeButtonState(buttonState == ButtonState.IDLE ? R.string.search_text : R.string.search_text_cancel);
     }
 
     @Override

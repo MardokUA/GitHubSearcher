@@ -86,6 +86,11 @@ public class SearchActivity extends AppCompatActivity implements SearchContract.
     }
 
     @Override
+    public void changeButtonState(int buttonText) {
+        mSearchButton.setText(getString(buttonText));
+    }
+
+    @Override
     public void setSuccessResult(String result) {
         mLastSuccessQuery = result;
     }

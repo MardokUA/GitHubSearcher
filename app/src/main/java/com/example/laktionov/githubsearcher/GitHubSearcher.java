@@ -1,4 +1,4 @@
-package com.example.laktionov.githubsearcher.application;
+package com.example.laktionov.githubsearcher;
 
 import android.app.Application;
 

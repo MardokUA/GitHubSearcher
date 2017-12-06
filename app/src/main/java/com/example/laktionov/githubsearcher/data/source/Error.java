@@ -2,7 +2,7 @@ package com.example.laktionov.githubsearcher.data.source;
 
 import com.example.laktionov.githubsearcher.R;
 
-public class Error {
+public class Error extends Throwable {
 
     public static final int ERROR_EMPTY_QUERY = 44;
     public static final int ERROR_FOUND_NOTHING = 45;

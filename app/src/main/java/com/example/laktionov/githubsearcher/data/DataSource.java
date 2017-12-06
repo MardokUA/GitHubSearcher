@@ -2,9 +2,10 @@ package com.example.laktionov.githubsearcher.data;
 
 import com.example.laktionov.githubsearcher.data.source.Error;
 import com.example.laktionov.githubsearcher.data.source.local.entity.RepositoryInfo;
-import com.example.laktionov.githubsearcher.data.source.remote.entity.RemoteRepository;
 
 import java.util.List;
+
+import io.reactivex.Maybe;
 
 public interface DataSource {
 

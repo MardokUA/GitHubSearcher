@@ -1,8 +1,7 @@
 package com.example.laktionov.githubsearcher.domain.usecase;
 
-import com.example.laktionov.githubsearcher.application.GitHubSearcher;
+import com.example.laktionov.githubsearcher.GitHubSearcher;
 import com.example.laktionov.githubsearcher.data.DataRepository;
-import com.example.laktionov.githubsearcher.data.DataSource;
 import com.example.laktionov.githubsearcher.data.source.Error;
 import com.example.laktionov.githubsearcher.data.source.local.entity.RepositoryInfo;
 
@@ -10,10 +9,14 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import io.reactivex.Observable;
+import io.reactivex.disposables.Disposable;
+
 public class GetRepos implements UseCase<GetRepos.RequestValues, GetRepos.ResponseValues> {
 
     @Inject
     DataRepository mDataRepository;
+    private Disposable mDisposable;
 
     public GetRepos() {
         GitHubSearcher.getAppComponent().inject(this);
@@ -22,20 +25,22 @@ public class GetRepos implements UseCase<GetRepos.RequestValues, GetRepos.Respon
     @Override
     public void execute(RequestValues values, UseCaseCallBack<ResponseValues> caseCallBack) {
         String query = values.getRequestString();
-        mDataRepository.findRepositories(query, new DataSource.SourceCallBack() {
-            @Override
-            public void onSuccess(List<RepositoryInfo> repositories) {
-                GetRepos.ResponseValues responseValues = new ResponseValues(repositories);
-                caseCallBack.onSuccess(responseValues);
-            }
-
-            @Override
-            public void onFailure(Error error) {
-                caseCallBack.onFailure(error);
-            }
-        });
+        Observable<List<RepositoryInfo>> repositories = mDataRepository.findRepositories(query);
+        mDisposable = repositories
+                .subscribe(repositoryInfos -> {
+                    GetRepos.ResponseValues responseValues = new GetRepos.ResponseValues(repositoryInfos);
+                    caseCallBack.onSuccess(responseValues);
+                }, throwable -> {
+                    caseCallBack.onFailure((Error) throwable);
+                });
     }
 
+    @Override
+    public void cancel() {
+        if (mDisposable != null && !mDisposable.isDisposed()) {
+            mDisposable.dispose();
+        }
+    }
 
     public static class RequestValues implements UseCase.RequestValues {
 
@@ -45,7 +50,7 @@ public class GetRepos implements UseCase<GetRepos.RequestValues, GetRepos.Respon
             this.mRequestString = mRequestString;
         }
 
-        public String getRequestString() {
+        String getRequestString() {
             return mRequestString;
         }
     }
@@ -54,7 +59,7 @@ public class GetRepos implements UseCase<GetRepos.RequestValues, GetRepos.Respon
 
         private final List<RepositoryInfo> mResponseReps;
 
-        public ResponseValues(List<RepositoryInfo> mResponseReps) {
+        ResponseValues(List<RepositoryInfo> mResponseReps) {
             this.mResponseReps = mResponseReps;
         }
 

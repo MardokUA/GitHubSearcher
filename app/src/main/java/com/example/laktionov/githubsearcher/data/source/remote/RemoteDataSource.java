@@ -1,6 +1,6 @@
 package com.example.laktionov.githubsearcher.data.source.remote;
 
-import com.example.laktionov.githubsearcher.data.source.BaseDataSource;
+import com.example.laktionov.githubsearcher.data.DataSource;
 import com.example.laktionov.githubsearcher.data.source.Error;
 import com.example.laktionov.githubsearcher.data.source.local.entity.RepositoryInfo;
 import com.example.laktionov.githubsearcher.data.source.remote.entity.RemoteRepository;
@@ -14,7 +14,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
 
 @Singleton
-public class RemoteDataSource extends BaseDataSource {
+public class RemoteDataSource implements DataSource {
 
     private final SearchApi mSearchApi;
 
@@ -23,13 +23,14 @@ public class RemoteDataSource extends BaseDataSource {
     }
 
     @Override
-    public void findRepositories(String query, SourceCallBack callBack) {
+    public void findRepositories(String query, SourceCallBack sourceCallBack) {
         mSearchApi.searchRepos(query)
                 .observeOn(AndroidSchedulers.mainThread())
                 .map(mRepositoryRequest ->
                         transmorph(mRepositoryRequest.getRepos(), query))
                 .subscribeOn(Schedulers.io())
-                .subscribe(callBack::onSuccess, throwable -> callBack.onFailure(new Error(Error.ERROR_SERVER_RESPONSE)));
+                .subscribe(sourceCallBack::onSuccess,
+                        throwable -> sourceCallBack.onFailure(new Error(Error.ERROR_SERVER_RESPONSE)));
     }
 
     private List<RepositoryInfo> transmorph(List<RemoteRepository> remoteRepositoryList, String query) {
@@ -50,4 +51,19 @@ public class RemoteDataSource extends BaseDataSource {
         }
         return repositoryInfoList;
     }
+
+    @Override
+    public void persistResponseData(List<RepositoryInfo> repositoryInfoList) {
+
+    }
+
+//    @Override
+//    public void findRepositories(String query, SourceCallBack callBack) {
+//        mSearchApi.searchRepos(query)
+//                .observeOn(AndroidSchedulers.mainThread())
+//                .map(mRepositoryRequest ->
+//                        transmorph(mRepositoryRequest.getRepos(), query))
+//                .subscribeOn(Schedulers.io())
+//                .subscribe(callBack::onSuccess, throwable -> callBack.onFailure(new Error(Error.ERROR_SERVER_RESPONSE)));
+//    }
 }

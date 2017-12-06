@@ -27,6 +27,8 @@ public interface SearchContract {
 
         void showProgress(boolean isShown);
 
+        void changeButtonState(@StringRes int buttonText);
+
         void setSuccessResult(String result);
 
     }

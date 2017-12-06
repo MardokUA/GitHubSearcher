@@ -9,7 +9,10 @@ import com.example.laktionov.githubsearcher.data.source.local.entity.RepositoryI
 
 import java.util.List;
 
+import io.reactivex.Flowable;
 import io.reactivex.Maybe;
+import io.reactivex.Observable;
+import io.reactivex.Single;
 
 @Dao
 public interface RepositoryDao {
@@ -21,8 +24,5 @@ public interface RepositoryDao {
     void deletePersistData();
 
     @Query("SELECT * FROM local_reps WHERE `query` LIKE :query")
-    Maybe<List<RepositoryInfo>> getCachedLocalDataWithQuery(String query);
-
-//    @Query("SELECT * FROM local_reps")
-//    Maybe<List<RepositoryInfo>> getCachedData();
+    Single<List<RepositoryInfo>> getCachedLocalDataWithQuery(String query);
 }

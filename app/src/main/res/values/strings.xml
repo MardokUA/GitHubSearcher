@@ -5,7 +5,8 @@
     <string name="error_find_nothing">This organization doesn\’t have any repositories that match</string>
     <string name="error_internet_connection">Internet connection error</string>
     <string name="error_external">Something went wrong :(</string>
-    <string name="search_button_text">Find!</string>
+    <string name="search_text">Search</string>
+    <string name="search_text_cancel">Cancel</string>
 
     <string name="repository_create_date">Created:</string>
     <string name="repository_state">Status:</string>
