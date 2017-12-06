@@ -14,8 +14,6 @@ public interface SearchContract {
 
         void onSearchCLick(String query);
 
-        void showLastRequestResults(String query);
-
         void onDestroy();
     }
 
@@ -29,7 +27,7 @@ public interface SearchContract {
 
         void changeButtonState(@StringRes int buttonText);
 
-        void setSuccessResult(String result);
+        void clearData();
 
     }
 }

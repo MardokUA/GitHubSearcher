@@ -5,10 +5,12 @@ import com.example.laktionov.githubsearcher.data.source.local.database.Repositor
 import com.example.laktionov.githubsearcher.data.source.local.entity.RepositoryInfo;
 
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import javax.inject.Singleton;
 
 import io.reactivex.Flowable;
+import io.reactivex.Single;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
@@ -23,11 +25,11 @@ public class LocalDataSource implements DataSource {
     }
 
     @Override
-    public void findRepositories(String query, SourceCallBack sourceCallBack) {
-        mRepositoryDao.getCachedLocalDataWithQuery(query)
+    public Single<List<RepositoryInfo>> findRepositories(String query) {
+
+        return mRepositoryDao.getCachedLocalDataWithQuery(query)
                 .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(sourceCallBack::onSuccess);
+                .observeOn(AndroidSchedulers.mainThread());
     }
 
     @Override
@@ -38,5 +40,4 @@ public class LocalDataSource implements DataSource {
         }).start();
 
     }
-
 }

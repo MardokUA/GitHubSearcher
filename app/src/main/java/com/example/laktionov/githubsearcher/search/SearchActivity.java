@@ -8,43 +8,42 @@ import android.support.v7.widget.AppCompatButton;
 import android.support.v7.widget.AppCompatEditText;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.ProgressBar;
 
+import com.example.laktionov.githubsearcher.GitHubSearcher;
 import com.example.laktionov.githubsearcher.R;
 import com.example.laktionov.githubsearcher.data.source.local.entity.RepositoryInfo;
 
 import java.util.List;
 
+import javax.inject.Inject;
+
 public class SearchActivity extends AppCompatActivity implements SearchContract.View {
 
-    private final String LAST_REQUEST = "last_request";
+    @Inject
+    SearchPresenterImp mPresenter;
 
-    private SearchPresenterImp mPresenter;
     private AppCompatButton mSearchButton;
     private AppCompatEditText mSearchEditText;
     private RecyclerView mSearchRecycler;
     private SearchAdapter mSearchAdapter;
     private ProgressBar mProgressBar;
 
-    private String mLastSuccessQuery;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search);
 
-        iniPresenter();
         iniViewElements();
+        initPresenter();
         initListeners();
-        if (savedInstanceState != null) {
-            mPresenter.showLastRequestResults(savedInstanceState.getString(LAST_REQUEST));
-        }
     }
 
-    private void iniPresenter() {
-        mPresenter = new SearchPresenterImp();
+    private void initPresenter() {
+        GitHubSearcher.getAppComponent().inject(this);
         mPresenter.onInit(this);
     }
 
@@ -91,16 +90,10 @@ public class SearchActivity extends AppCompatActivity implements SearchContract.
     }
 
     @Override
-    public void setSuccessResult(String result) {
-        mLastSuccessQuery = result;
-    }
-
-    @Override
-    protected void onSaveInstanceState(Bundle outState) {
-        if (mLastSuccessQuery != null) {
-            outState.putString(LAST_REQUEST, mLastSuccessQuery);
+    public void clearData() {
+        if (mSearchAdapter != null) {
+            mSearchAdapter.clear();
         }
-        super.onSaveInstanceState(outState);
     }
 
     private void closeKeyboard() {

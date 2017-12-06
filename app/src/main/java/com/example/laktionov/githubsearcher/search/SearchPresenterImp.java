@@ -1,5 +1,8 @@
 package com.example.laktionov.githubsearcher.search;
 
+import android.os.Handler;
+import android.os.Looper;
+
 import com.example.laktionov.githubsearcher.R;
 import com.example.laktionov.githubsearcher.data.source.Error;
 import com.example.laktionov.githubsearcher.data.source.local.entity.RepositoryInfo;
@@ -13,24 +16,43 @@ public class SearchPresenterImp implements SearchContract.Presenter {
     private SearchContract.View mView;
     private GetRepos mGetUseCase;
     private ButtonState mCurrentButtonState = ButtonState.IDLE;
+    private Handler mHandler = new Handler(Looper.getMainLooper());
+
+    private String mLastSuccessQuery;
 
     private enum ButtonState {
         SEARCHING, IDLE
     }
 
-    SearchPresenterImp() {
+    public SearchPresenterImp() {
         mGetUseCase = new GetRepos();
     }
 
     @Override
     public void onInit(SearchContract.View view) {
         this.mView = view;
+        restoreViewState();
     }
 
-    @Override
-    public void showLastRequestResults(String query) {
-        if (isQueryIsValid(query))
-            checkRepos(query);
+    private void restoreViewState() {
+        if (mLastSuccessQuery != null) {
+            restoreLoadingState();
+        }
+    }
+
+    private void restoreLoadingState() {
+        changeButtonState(mCurrentButtonState);
+        switch (mCurrentButtonState) {
+            case SEARCHING:
+                if (mView != null) {
+                    mView.showProgress(true);
+                }
+                break;
+            case IDLE:
+                checkRepos(mLastSuccessQuery);
+                break;
+        }
+
     }
 
     @Override
@@ -55,19 +77,19 @@ public class SearchPresenterImp implements SearchContract.Presenter {
             @Override
             public void onSuccess(GetRepos.ResponseValues response) {
                 changeProgressState(false);
-                showResult(response.getResponseReps(), query);
+                mHandler.post(() -> {
+                    showResult(response.getResponseReps(), query);
+                });
             }
 
             @Override
             public void onFailure(Error error) {
-                showError(error);
+                mHandler.post(() -> {
+                    showEmptyScreen();
+                    showError(error);
+                });
             }
         });
-    }
-
-    private void cancelRequest() {
-        mGetUseCase.cancel();
-        changeButtonState(ButtonState.IDLE);
     }
 
     private void changeProgressState(boolean isShown) {
@@ -78,10 +100,26 @@ public class SearchPresenterImp implements SearchContract.Presenter {
     }
 
     private void showResult(List<RepositoryInfo> repositoryInfoList, String query) {
+        mLastSuccessQuery = query;
         if (mView != null) {
             mView.showSearchResult(repositoryInfoList);
-            mView.setSuccessResult(query);
         }
+    }
+
+    private void changeButtonState(ButtonState buttonState) {
+        mCurrentButtonState = buttonState;
+        mView.changeButtonState(buttonState == ButtonState.IDLE ? R.string.search_text : R.string.search_text_cancel);
+    }
+
+    private void showEmptyScreen() {
+        if (mView != null) {
+            mView.clearData();
+        }
+    }
+
+    private void cancelRequest() {
+        mGetUseCase.cancel();
+        changeProgressState(false);
     }
 
     private void showError(Error error) {
@@ -95,14 +133,9 @@ public class SearchPresenterImp implements SearchContract.Presenter {
         return query != null && query.trim().length() > 0;
     }
 
-    private void changeButtonState(ButtonState buttonState) {
-        mCurrentButtonState = buttonState;
-        mView.changeButtonState(buttonState == ButtonState.IDLE ? R.string.search_text : R.string.search_text_cancel);
-    }
-
     @Override
     public void onDestroy() {
-        mView = null;
+
     }
 
 }

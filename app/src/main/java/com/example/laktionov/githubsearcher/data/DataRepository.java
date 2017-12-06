@@ -25,38 +25,23 @@ public class DataRepository implements RepositoryContract {
 
     @Override
     public Observable<List<RepositoryInfo>> findRepositories(String query) {
-        return Observable.create(emitter -> mLocalDataSource.findRepositories(query, new DataSource.SourceCallBack() {
-            @Override
-            public void onSuccess(List<RepositoryInfo> repositories) {
-                if (repositories.isEmpty()) {
-                    mRemoteDataSource.findRepositories(query, new DataSource.SourceCallBack() {
-                        @Override
-                        public void onSuccess(List<RepositoryInfo> repositories) {
-                            if (!repositories.isEmpty()) {
-                                persistData(repositories);
-                                emitter.onNext(repositories);
+        return Observable.create(emitter -> mLocalDataSource.findRepositories(query)
+                .subscribe(localList -> {
+                    if (!localList.isEmpty()) {
+                        emitter.onNext(localList);
+                        emitter.onComplete();
+                    } else {
+                        mRemoteDataSource.findRepositories(query).subscribe(remoteList -> {
+                            if (!remoteList.isEmpty()) {
+                                emitter.onNext(remoteList);
                                 emitter.onComplete();
+                                persistData(remoteList);
                             } else {
-                                emitter.onError(new Error(Error.ERROR_FOUND_NOTHING));
+                                emitter.tryOnError(new Error(Error.ERROR_FOUND_NOTHING));
                             }
-                        }
-
-                        @Override
-                        public void onFailure(Error error) {
-                            emitter.onError(error);
-                        }
-                    });
-                } else {
-                    emitter.onNext(repositories);
-                    emitter.onComplete();
-                }
-            }
-
-            @Override
-            public void onFailure(Error error) {
-
-            }
-        }));
+                        }, throwable -> emitter.tryOnError(new Error(Error.ERROR_SERVER_RESPONSE)));
+                    }
+                }));
     }
 
     private void persistData(List<RepositoryInfo> remoteRepositories) {

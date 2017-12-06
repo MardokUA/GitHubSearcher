@@ -10,7 +10,9 @@ import java.util.List;
 import javax.inject.Inject;
 
 import io.reactivex.Observable;
+import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
+import io.reactivex.functions.Action;
 
 public class GetRepos implements UseCase<GetRepos.RequestValues, GetRepos.ResponseValues> {
 
@@ -27,12 +29,11 @@ public class GetRepos implements UseCase<GetRepos.RequestValues, GetRepos.Respon
         String query = values.getRequestString();
         Observable<List<RepositoryInfo>> repositories = mDataRepository.findRepositories(query);
         mDisposable = repositories
-                .subscribe(repositoryInfos -> {
-                    GetRepos.ResponseValues responseValues = new GetRepos.ResponseValues(repositoryInfos);
+                .doOnComplete(() -> repositories.unsubscribeOn(AndroidSchedulers.mainThread()))
+                .subscribe(repositoryList -> {
+                    GetRepos.ResponseValues responseValues = new GetRepos.ResponseValues(repositoryList);
                     caseCallBack.onSuccess(responseValues);
-                }, throwable -> {
-                    caseCallBack.onFailure((Error) throwable);
-                });
+                }, throwable -> caseCallBack.onFailure((Error) throwable));
     }
 
     @Override

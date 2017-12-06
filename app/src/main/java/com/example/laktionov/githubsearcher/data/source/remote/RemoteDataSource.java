@@ -1,15 +1,16 @@
 package com.example.laktionov.githubsearcher.data.source.remote;
 
 import com.example.laktionov.githubsearcher.data.DataSource;
-import com.example.laktionov.githubsearcher.data.source.Error;
 import com.example.laktionov.githubsearcher.data.source.local.entity.RepositoryInfo;
 import com.example.laktionov.githubsearcher.data.source.remote.entity.RemoteRepository;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import javax.inject.Singleton;
 
+import io.reactivex.Single;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
 
@@ -23,14 +24,12 @@ public class RemoteDataSource implements DataSource {
     }
 
     @Override
-    public void findRepositories(String query, SourceCallBack sourceCallBack) {
-        mSearchApi.searchRepos(query)
+    public Single<List<RepositoryInfo>> findRepositories(String query) {
+        return mSearchApi.searchRepos(query)
                 .observeOn(AndroidSchedulers.mainThread())
                 .map(mRepositoryRequest ->
                         transmorph(mRepositoryRequest.getRepos(), query))
-                .subscribeOn(Schedulers.io())
-                .subscribe(sourceCallBack::onSuccess,
-                        throwable -> sourceCallBack.onFailure(new Error(Error.ERROR_SERVER_RESPONSE)));
+                .subscribeOn(Schedulers.io());
     }
 
     private List<RepositoryInfo> transmorph(List<RemoteRepository> remoteRepositoryList, String query) {
@@ -57,13 +56,4 @@ public class RemoteDataSource implements DataSource {
 
     }
 
-//    @Override
-//    public void findRepositories(String query, SourceCallBack callBack) {
-//        mSearchApi.searchRepos(query)
-//                .observeOn(AndroidSchedulers.mainThread())
-//                .map(mRepositoryRequest ->
-//                        transmorph(mRepositoryRequest.getRepos(), query))
-//                .subscribeOn(Schedulers.io())
-//                .subscribe(callBack::onSuccess, throwable -> callBack.onFailure(new Error(Error.ERROR_SERVER_RESPONSE)));
-//    }
 }
