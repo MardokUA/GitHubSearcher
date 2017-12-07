@@ -11,6 +11,8 @@ import java.util.List;
 import javax.inject.Singleton;
 
 import io.reactivex.Observable;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.functions.Cancellable;
 
 @Singleton
 public class DataRepository implements RepositoryContract {
@@ -25,23 +27,25 @@ public class DataRepository implements RepositoryContract {
 
     @Override
     public Observable<List<RepositoryInfo>> findRepositories(String query) {
-        return Observable.create(emitter -> mLocalDataSource.findRepositories(query)
-                .subscribe(localList -> {
-                    if (!localList.isEmpty()) {
-                        emitter.onNext(localList);
-                        emitter.onComplete();
-                    } else {
-                        mRemoteDataSource.findRepositories(query).subscribe(remoteList -> {
-                            if (!remoteList.isEmpty()) {
-                                emitter.onNext(remoteList);
+        return Observable.create(emitter ->
+                mLocalDataSource.findRepositories(query)
+                        .subscribe(localList -> {
+                            if (!localList.isEmpty()) {
+                                emitter.onNext(localList);
                                 emitter.onComplete();
-                                persistData(remoteList);
                             } else {
-                                emitter.tryOnError(new Error(Error.ERROR_FOUND_NOTHING));
+                                Disposable subscribe = mRemoteDataSource.findRepositories(query).subscribe(remoteList -> {
+                                    if (!remoteList.isEmpty()) {
+                                        emitter.onNext(remoteList);
+                                        emitter.onComplete();
+                                        persistData(remoteList);
+                                    } else {
+                                        emitter.tryOnError(new Error(Error.ERROR_FOUND_NOTHING));
+                                    }
+                                }, throwable -> emitter.tryOnError(new Error(Error.ERROR_SERVER_RESPONSE)));
+                                emitter.setCancellable(subscribe::dispose);
                             }
-                        }, throwable -> emitter.tryOnError(new Error(Error.ERROR_SERVER_RESPONSE)));
-                    }
-                }));
+                        }));
     }
 
     private void persistData(List<RepositoryInfo> remoteRepositories) {
